@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>多平台聚合搜索</title>
+  <title>想简单些</title>
 
   <!-- 机器人 favicon（保留） -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0%' stop-color='%2300e5ff'/><stop offset='100%' stop-color='%236366f1'/></linearGradient></defs><rect width='100' height='100' rx='20' fill='url(%23g)'/><g transform='translate(18,18) scale(0.64)'><rect x='22' y='18' width='36' height='26' rx='4' fill='white'/><circle cx='34' cy='30' r='4.5' fill='%236366f1'/><circle cx='50' cy='30' r='4.5' fill='%2300e5ff'/><rect x='34' y='38' width='16' height='3' rx='1.5' fill='%236366f1'/></g></svg>" />
@@ -66,7 +66,26 @@
     .search-field .hint{font-size:13px;color:var(--muted)}
 
     /* Engines grid */
-    .engines{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px}
+    .engines{
+      display:flex;
+      flex-direction:row;
+      gap:16px;
+      justify-content:space-between;
+      align-items:stretch;
+      flex-wrap:nowrap; /* 强制单行横向排列 */
+    }
+    
+    .engines::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.25);border-radius:6px}
+    .card{
+      background: linear-gradient(180deg, rgba(247,249,255,1), rgba(244,247,255,1));
+      border-radius:16px;
+      padding:22px 16px;
+      text-align:center;
+      border:1px solid rgba(15,23,42,0.04);
+      transition:transform .18s ease,box-shadow .18s ease;
+      flex:1 1 0; /* 均分宽度，保证一行完整显示 */
+      min-width:0;
+    }
     .card{
       background: linear-gradient(180deg, rgba(247,249,255,1), rgba(244,247,255,1));
       border-radius:16px;padding:26px 18px;text-align:center;border:1px solid rgba(15,23,42,0.04);
@@ -112,12 +131,8 @@
 
     <div class="search">
       <div class="search-field" role="search">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.7">
-          <path d="M21 21l-4.35-4.35" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-          <circle cx="11" cy="11" r="5.2" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
-        <input id="keyword" type="search" placeholder="" aria-label="搜索关键词"
-               autocomplete="off" spellcheck="false" />
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" style="opacity:.7"><path d="M21 21l-4.35-4.35" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><circle cx="11" cy="11" r="5.2" stroke="#94a3b8" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <input id="keyword" type="search" placeholder="" aria-label="搜索关键词" autocomplete="off" />
         <div class="hint"> </div>
       </div>
     </div>
@@ -142,6 +157,11 @@
         <h2>CSDN</h2>
         <button class="btn" onclick="searchCSDN()">搜索</button>
       </div>
+
+      <div class="card">
+        <h2>DeepSeek</h2>
+        <button class="btn" onclick="searchDeepSeek()">搜索</button>
+      </div>
     </div>
 
     <div class="footer"> </div>
@@ -149,17 +169,45 @@
 
   <script>
     const input = document.getElementById('keyword');
-input.addEventListener('keydown', (e) => { 
-  if (e.key === 'Enter') searchBing(); 
-});
-const kw = () => encodeURIComponent(input.value.trim());
-const open = (url) => window.open(url, '_blank');
 
-function searchXHS() { if (!input.value.trim()) return; open(`https://www.xiaohongshu.com/search_result?keyword=${kw()}`); }
-function searchBili() { if (!input.value.trim()) return; open(`https://search.bilibili.com/all?keyword=${kw()}`); }
-function searchZhihu() { if (!input.value.trim()) return; open(`https://www.zhihu.com/search?q=${kw()}`); }
-function searchBing() { if (!input.value.trim()) return; open(`https://www.bing.com/search?q=${encodeURIComponent(input.value.trim())}`); }
-function searchCSDN() { if (!input.value.trim()) return; open(`https://so.csdn.net/so/search?q=${kw()}`); }
+    // Enter 键默认 Bing 搜索
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') searchBing();
+    });
+
+    const getKeyword = () => input.value.trim();
+    const encodeKW = () => encodeURIComponent(getKeyword());
+    const openInNew = (url) => window.open(url, '_blank', 'noopener');
+
+    function searchXHS() {
+      if (!getKeyword()) return;
+      openInNew(`https://www.xiaohongshu.com/search_result?keyword=${encodeKW()}`);
+    }
+
+    function searchBili() {
+      if (!getKeyword()) return;
+      openInNew(`https://search.bilibili.com/all?keyword=${encodeKW()}`);
+    }
+
+    function searchZhihu() {
+      if (!getKeyword()) return;
+      openInNew(`https://www.zhihu.com/search?q=${encodeKW()}`);
+    }
+
+    function searchCSDN() {
+      if (!getKeyword()) return;
+      openInNew(`https://so.csdn.net/so/search?q=${encodeKW()}`);
+    }
+
+    function searchDeepSeek() {
+      if (!getKeyword()) return;
+      openInNew(`https://www.deepseek.com/search?q=${encodeKW()}`);
+    }
+
+    function searchBing() {
+      if (!getKeyword()) return;
+      openInNew(`https://www.bing.com/search?q=${encodeKW()}`);
+    }
   </script>
 </body>
 </html>
