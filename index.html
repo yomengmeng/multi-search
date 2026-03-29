@@ -250,7 +250,13 @@
     const open = url => window.open(url, "_blank", "noopener");
 
     function searchXHS(){ if(kw()) open(`https://www.xiaohongshu.com/search_result?keyword=${q()}`); }
-    function searchBili(){ if(kw()) open(`https://search.bilibili.com/all?keyword=${q()}`); }
+    function searchBili(){
+      if (kw()) {
+         open(`https://search.bilibili.com/all?keyword=${q()}`);
+      } else {
+        open("https://t.bilibili.com/?spm_id_from=333.788.0.0");
+      }
+    }
     function searchZhihu(){ if(kw()) open(`https://www.zhihu.com/search?q=${q()}`); }
     function searchCSDN(){ if(kw()) open(`https://so.csdn.net/so/search?q=${q()}`); }
 
